@@ -1,0 +1,31 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function dono(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // Dias trabalhados: cada pessoa só vê e mexe nos próprios
+    match /usuarios/{uid}/ganhos/{id} {
+      allow read, delete: if dono(uid);
+      allow create, update: if dono(uid)
+        && request.resource.data.data is string
+        && request.resource.data.data.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.valor is number
+        && request.resource.data.valor > 0
+        && request.resource.data.valor < 100000
+        && request.resource.data.funcao in ['recepcionista', 'monitor'];
+    }
+
+    // Metas mensais (um documento por mês, ex.: 2026-10)
+    match /usuarios/{uid}/metas/{mes} {
+      allow read, delete: if dono(uid);
+      allow create, update: if dono(uid)
+        && mes.matches('^[0-9]{4}-[0-9]{2}$')
+        && request.resource.data.valor is number
+        && request.resource.data.valor > 0
+        && request.resource.data.valor < 1000000;
+    }
+  }
+}

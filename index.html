@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meus Ganhos</title>
+<meta name="description" content="Registre cada dia trabalhado e acompanhe quanto você já recebeu.">
+<meta name="theme-color" content="#c2417a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icones/icone.svg" type="image/svg+xml">
+<link rel="icon" href="icones/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Meus Ganhos">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<!-- Carregando -->
+<div class="splash" id="carregando">
+  <img src="icones/icone.svg" alt="" width="72" height="72">
+</div>
+
+<!-- Tela de entrada -->
+<main class="boas-vindas" id="boas-vindas" hidden>
+  <div class="bv-card">
+    <img class="bv-logo" src="icones/icone.svg" alt="" width="88" height="88">
+    <h1>Meus Ganhos</h1>
+    <p class="bv-sub">Seus dias de trabalho e quanto você recebeu, sempre com você.</p>
+    <ul class="bv-lista">
+      <li><strong>Registre o dia em segundos</strong><span>Data, valor e se foi recepcionista ou monitor.</span></li>
+      <li><strong>Acompanhe o mês</strong><span>Total, meta e comparação com o mês anterior.</span></li>
+      <li><strong>Salvo na nuvem</strong><span>Abra no celular ou no computador. Só você vê os seus ganhos.</span></li>
+    </ul>
+    <button class="btn btn-grande" id="entrar" type="button">Entrar com Google</button>
+    <p class="bv-msg" id="bv-msg" role="alert"></p>
+  </div>
+</main>
+
+<!-- App -->
+<div class="wrap" id="painel" hidden>
+  <header class="topo">
+    <div class="marca">
+      <img src="icones/icone.svg" alt="" width="44" height="44">
+      <div>
+        <h1 id="titulo">Olá!</h1>
+        <p class="status" id="status">Carregando seus ganhos…</p>
+      </div>
+    </div>
+    <div class="topo-acoes">
+      <button class="btn-sec" id="instalar" type="button" hidden>Instalar app</button>
+      <button class="link" id="sair" type="button">Sair</button>
+    </div>
+  </header>
+
+  <div class="nudge" id="nudge" hidden>
+    <div><strong>Trabalhou hoje?</strong> <span>Registre o dia para não esquecer.</span></div>
+    <div class="nudge-acoes">
+      <button class="btn btn-pequeno" id="nudge-ir" type="button">Registrar agora</button>
+      <button class="link" id="nudge-fechar" type="button">Agora não</button>
+    </div>
+  </div>
+
+  <section class="summary anima" aria-label="Resumo">
+    <div class="hero">
+      <div class="label">Total ganho até hoje</div>
+      <div class="big num" id="total-geral">R$ 0,00</div>
+      <div class="sub num" id="total-sub">Nenhum dia registrado ainda</div>
+    </div>
+
+    <div class="month">
+      <div class="month-head">
+        <div class="label">Mês</div>
+        <div class="month-nav">
+          <button class="icon-btn" id="prev" type="button" aria-label="Mês anterior">‹</button>
+          <span id="month-name">—</span>
+          <button class="icon-btn" id="next" type="button" aria-label="Próximo mês">›</button>
+        </div>
+      </div>
+      <div class="big num" id="total-mes">R$ 0,00</div>
+      <div class="mes-info">
+        <span class="num status" id="mes-dias">0 dias trabalhados</span>
+        <span class="num status" id="mes-media"></span>
+      </div>
+      <div class="compara" id="compara" hidden></div>
+
+      <div class="meta" id="meta">
+        <div class="meta-topo">
+          <span class="label">Meta do mês</span>
+          <button class="link" id="meta-editar" type="button">Definir meta</button>
+        </div>
+        <div id="meta-vazia" class="status">Defina quanto quer ganhar neste mês e acompanhe o progresso.</div>
+        <div id="meta-progresso" hidden>
+          <div class="meta-barra" role="progressbar" aria-valuemin="0" aria-valuemax="100" id="meta-barra"><i id="meta-preench"></i></div>
+          <div class="meta-texto num"><span id="meta-valores"></span><strong id="meta-falta"></strong></div>
+        </div>
+        <form class="meta-form" id="meta-form" hidden novalidate>
+          <div class="money"><span>R$</span><input type="text" inputmode="decimal" id="meta-valor" placeholder="0,00" autocomplete="off" aria-label="Valor da meta"></div>
+          <button class="btn btn-pequeno" type="submit">Salvar</button>
+          <button class="link" type="button" id="meta-cancelar">Cancelar</button>
+          <button class="link perigo" type="button" id="meta-remover" hidden>Remover</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="main anima">
+    <div class="panel" id="painel-form">
+      <h2 id="form-titulo">Adicionar dia trabalhado</h2>
+      <form id="form" novalidate>
+        <div class="field">
+          <label for="f-data">Dia</label>
+          <input type="date" id="f-data" required>
+        </div>
+        <div class="field">
+          <label for="f-valor">Quanto recebeu</label>
+          <div class="money"><span>R$</span><input type="text" inputmode="decimal" id="f-valor" placeholder="0,00" autocomplete="off" required></div>
+        </div>
+        <fieldset>
+          <legend>Trabalhou como</legend>
+          <div class="roles">
+            <input type="radio" name="funcao" id="f-rec" value="recepcionista" checked>
+            <label for="f-rec" class="r-rec">Recepcionista</label>
+            <input type="radio" name="funcao" id="f-mon" value="monitor">
+            <label for="f-mon" class="r-mon">Monitor</label>
+          </div>
+        </fieldset>
+        <div class="form-botoes">
+          <button class="btn" id="f-btn" type="submit">Salvar dia</button>
+          <button class="btn-sec" id="f-cancelar" type="button" hidden>Cancelar</button>
+        </div>
+        <p class="form-msg" id="f-msg" role="status"></p>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="chart-head">
+        <h2 id="chart-title">Ganhos por mês</h2>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="status">Toque em um mês para ver os dias dele.</div>
+    </div>
+  </section>
+
+  <section class="panel anima" aria-labelledby="list-title">
+    <div class="list-head">
+      <h2 id="list-title">Dias trabalhados</h2>
+      <span class="status num" id="list-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Dia</th><th>Função</th><th class="v">Valor</th><th class="v"><span class="sr">Ações</span></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="empty" id="empty" hidden>
+      <strong>Nenhum dia neste mês</strong>
+      <span>Use “Adicionar dia trabalhado” para registrar o primeiro.</span>
+    </div>
+  </section>
+
+  <section class="config anima" aria-label="Configurações">
+    <div class="panel">
+      <h2>Lembrete diário</h2>
+      <p class="status">Receba um aviso no celular todo dia para registrar seus ganhos. O lembrete fica na sua agenda.</p>
+      <div class="field">
+        <label for="lembrete-hora">Horário do lembrete</label>
+        <input type="time" id="lembrete-hora" value="19:00">
+      </div>
+      <div class="botoes-col">
+        <a class="btn" id="lembrete-google" href="#" target="_blank" rel="noopener">Criar lembrete no Google Agenda</a>
+        <button class="btn-sec" id="lembrete-ics" type="button">Baixar para a agenda do iPhone</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Seus dados</h2>
+      <p class="status">Baixe uma cópia dos seus ganhos para guardar ou abrir no Excel. Se precisar, restaure a partir de um backup.</p>
+      <div class="botoes-col">
+        <button class="btn-sec" id="baixar-planilha" type="button">Baixar planilha (Excel)</button>
+        <button class="btn-sec" id="baixar-backup" type="button">Baixar backup completo</button>
+        <label class="btn-sec arquivo" for="restaurar-arquivo">Restaurar backup</label>
+        <input type="file" id="restaurar-arquivo" accept=".json,application/json" hidden>
+      </div>
+      <div class="confirma" id="restaurar-confirma" hidden>
+        <p id="restaurar-texto"></p>
+        <div class="form-botoes">
+          <button class="btn btn-pequeno" id="restaurar-ok" type="button">Restaurar</button>
+          <button class="btn-sec" id="restaurar-cancelar" type="button">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="painel-instalar">
+      <h2>App no celular</h2>
+      <p class="status" id="instalar-texto">Adicione o Meus Ganhos à tela inicial para abrir como um aplicativo, em tela cheia.</p>
+      <ul class="passos" id="instalar-passos"></ul>
+      <button class="btn" id="instalar-2" type="button" hidden>Instalar app</button>
+    </div>
+  </section>
+
+  <footer class="rodape">Meus Ganhos · seus dados ficam salvos na sua conta e só você tem acesso.</footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
