@@ -12,7 +12,7 @@ Site: https://profound-mousse-575028.netlify.app
 | `estilo.css` | Cores, fontes e animações |
 | `app.js` | Funcionamento do app |
 | `config.js` | Ligação com o Firebase (não mexer) |
-| `manifest.webmanifest`, `sw.js`, `icones/` | Ícone na tela inicial, tela cheia e uso sem internet |
+| `manifest.webmanifest`, `sw.js`, `icone-*.png`, `apple-touch-icon.png` | Ícone na tela inicial, tela cheia e uso sem internet |
 | `firestore.rules` | Regras de segurança do banco (copiar para o Firebase quando mudar) |
 | `netlify.toml` | Configuração de publicação no Netlify |
 

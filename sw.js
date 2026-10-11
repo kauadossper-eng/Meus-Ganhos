@@ -1,9 +1,9 @@
 // Service worker: deixa o app abrir rápido e funcionar sem internet.
 // Arquivos do próprio site: tenta a rede primeiro (para pegar a versão nova) e usa a cópia guardada se estiver offline.
-const CACHE = "meus-ganhos-v2";
+const CACHE = "meus-ganhos-v3";
 const ARQUIVOS = [
   "/", "/index.html", "/estilo.css", "/app.js", "/config.js", "/manifest.webmanifest",
-  "/icones/icone.svg", "/icones/icone-192.png", "/icones/icone-512.png", "/icones/apple-touch-icon.png"
+  "/icone.svg", "/icone-192.png", "/icone-512.png", "/apple-touch-icon.png"
 ];
 const SDK = "https://www.gstatic.com/firebasejs/";
 
