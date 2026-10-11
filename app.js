@@ -472,6 +472,44 @@
     window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
   }
 
+  // ================= MENU LATERAL E PÁGINAS =================
+  const VIEWS = ["inicio", "lembrete", "dados", "app"];
+  const telaGrande = window.matchMedia("(min-width: 1100px)");
+  function abrirMenu() {
+    if (telaGrande.matches) return;
+    $("menu-fundo").hidden = false;
+    requestAnimationFrame(() => { $("menu").classList.add("aberto"); $("menu-fundo").classList.add("visivel"); });
+    $("menu-abrir").setAttribute("aria-expanded", "true");
+    setTimeout(() => { const a = $("menu").querySelector('[aria-current="page"]') || $("menu").querySelector("a"); if (a) a.focus(); }, 50);
+  }
+  function fecharMenu() {
+    if (!$("menu").classList.contains("aberto")) return;
+    $("menu").classList.remove("aberto");
+    $("menu-fundo").classList.remove("visivel");
+    $("menu-abrir").setAttribute("aria-expanded", "false");
+    setTimeout(() => { if (!$("menu").classList.contains("aberto")) $("menu-fundo").hidden = true; }, menosMovimento ? 0 : 320);
+  }
+  $("menu-abrir").addEventListener("click", abrirMenu);
+  $("menu-fechar").addEventListener("click", fecharMenu);
+  $("menu-fundo").addEventListener("click", fecharMenu);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") fecharMenu(); });
+
+  function mostrarView() {
+    const nome = VIEWS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "inicio";
+    document.querySelectorAll(".view").forEach(v => { v.hidden = v.dataset.view !== nome; });
+    document.querySelectorAll(".menu-nav a").forEach(a => {
+      if (a.dataset.view === nome) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    fecharMenu();
+    window.scrollTo(0, 0);
+    if (nome === "inicio") render();
+  }
+  window.addEventListener("hashchange", mostrarView);
+  document.querySelectorAll(".menu-nav a").forEach(a => a.addEventListener("click", () => {
+    // Clicar na página já aberta só fecha o menu
+    if (location.hash.slice(1) === a.dataset.view || (!location.hash && a.dataset.view === "inicio")) fecharMenu();
+  }));
+
   // ================= LOGIN E DADOS =================
   function mostrar(tela) {
     $("carregando").hidden = tela !== "carregando";
@@ -495,8 +533,10 @@
     colMetas = base.collection("metas");
     const nome = user.displayName ? user.displayName.split(" ")[0] : "";
     $("titulo").textContent = nome ? `Olá, ${nome}!` : "Olá!";
+    $("menu-usuario").textContent = user.email || user.displayName || "";
     setStatus("Carregando seus ganhos…");
     mostrar("painel");
+    mostrarView();
     document.body.classList.add("entrou");
     render();
 
@@ -548,7 +588,7 @@
     // Guarda os dados no aparelho para funcionar sem internet
     firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(() => {});
     $("entrar").addEventListener("click", entrar);
-    $("sair").addEventListener("click", () => firebase.auth().signOut());
+    $("sair").addEventListener("click", () => { fecharMenu(); history.replaceState(null, "", location.pathname); firebase.auth().signOut(); });
     firebase.auth().getRedirectResult().catch(e => { if (e && e.code) $("bv-msg").textContent = `Não foi possível entrar. (código: ${e.code})`; });
     firebase.auth().onAuthStateChanged(u => u ? comLogin(u) : semLogin());
     window.addEventListener("online", () => render());

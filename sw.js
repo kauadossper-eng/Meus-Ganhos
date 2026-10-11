@@ -1,6 +1,6 @@
 // Service worker: deixa o app abrir rápido e funcionar sem internet.
 // Arquivos do próprio site: tenta a rede primeiro (para pegar a versão nova) e usa a cópia guardada se estiver offline.
-const CACHE = "meus-ganhos-v1";
+const CACHE = "meus-ganhos-v2";
 const ARQUIVOS = [
   "/", "/index.html", "/estilo.css", "/app.js", "/config.js", "/manifest.webmanifest",
   "/icones/icone.svg", "/icones/icone-192.png", "/icones/icone-512.png", "/icones/apple-touch-icon.png"
